@@ -1,63 +1,32 @@
-import React from "react";
-import Note from "./note";
+import React, {useState} from 'react';
+import CreateNote from "./create-note";
+import NoteList from "./note-list";
 
-export default class HomePage extends React.Component {
+export default function HomePage() {
+    const [notesList, notesListUpdate] = useState([]);
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            notes: ['one', 'two', 'three', 'four'].map((item, index) => noteItem(item, index))
-        };
-
-        this.inputRef = React.createRef();
-        this.addNote = this.addNote.bind(this);
-        this.remove = this.remove.bind(this);
-
+    function addNote(newNote) {
+        notesListUpdate([...notesList, newNote]);
     }
 
-    addNote() {
-        const newNotes = [...this.state.notes, noteItem(this.inputRef.current.value, this.state.notes.length)];
-        this.inputRef.current.value = '';
-        this.setState({
-            notes: newNotes
-        });
+    function removeNote(id) {
+        notesListUpdate(
+            notesList.filter(note => note.id !== id)
+        );
     }
 
-    remove(element) {
-        this.setState({
-            notes: this.state.notes.filter(el => el.id !== element.props.id)
-        })
-    }
-
-    render() {
-        return <>
+    return (
+        <>
             <header>
                 <h1>React note app</h1>
             </header>
+            <CreateNote addNote={addNote}/>
             <main>
-                <ul>
-                    {
-                        this.state.notes.map((el, ind) =>
-                            <li key={ind}>
-                                <Note id={el.id} title={el.title} onRemove={this.remove}/>
-                            </li>
-                        )
-                    }
-                </ul>
-                <div>
-                    <input type="text" ref={this.inputRef}/>
-                    <button onClick={this.addNote}>Create new</button>
-                </div>
+                {
+                    !notesList.length ? <h1>There are no notes now</h1> :
+                        <NoteList notesList={notesList} removeNote={removeNote}/>
+                }
             </main>
-            <footer></footer>
         </>
-    }
-}
-
-function noteItem(title, index) {
-    return {
-        id: Date.now() + index,
-        title: title
-    }
+    )
 }

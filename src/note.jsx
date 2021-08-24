@@ -1,12 +1,19 @@
 import React from "react";
 
-export default class Note extends React.Component {
-    constructor(props) {
-        super(props);
-        this.onRemove = props.onRemove;
-    }
+export default function Note({note, onRemove}) {
+    const {id, title, text} = note;
 
-    render() {
-        return <span>{this.props.title} <b onClick={() => this.onRemove(this)}>&times;</b></span>
-    }
+    return (
+        <div>
+            <p>
+                <span>{title}</span>
+                <button onClick={() => onRemove(id)}>
+                    <b>&times;</b>
+                </button>
+            </p>
+            <p>
+                {text}
+            </p>
+        </div>
+    )
 }
